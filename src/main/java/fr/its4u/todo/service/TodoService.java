@@ -17,6 +17,14 @@ public interface TodoService {
     List<Page> retrieveAllTodoPages();
 
     /**
+     * Get page by id.
+     *
+     * @param pageId id of page
+     * @return page
+     */
+    Page getPageById(Long pageId) throws PageNotFoundException;
+
+    /**
      * Create a new TodoPage.
      *
      * @param page todo page to create

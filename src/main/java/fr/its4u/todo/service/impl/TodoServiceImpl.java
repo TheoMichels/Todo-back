@@ -11,15 +11,15 @@ import fr.its4u.todo.mapper.TaskMapper;
 import fr.its4u.todo.rest.model.Page;
 import fr.its4u.todo.rest.model.Task;
 import fr.its4u.todo.service.TodoService;
-import jakarta.transaction.Transactional;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
 @Service
-@Transactional
+@Transactional(rollbackFor = {PageNotFoundException.class, TaskNotFoundException.class})
 @Slf4j
 public class TodoServiceImpl implements TodoService {
 
@@ -58,6 +58,23 @@ public class TodoServiceImpl implements TodoService {
     }
 
     /**
+     * Get page by id.
+     *
+     * @param pageId id of page
+     * @return page
+     */
+    @Override
+    public Page getPageById(Long pageId) throws PageNotFoundException {
+        PageEntity pageEntity = pageRepository.findById(pageId).orElse(null);
+
+        if (pageEntity == null) {
+            throw new PageNotFoundException();
+        }
+
+        return pageMapper.toModel(pageEntity);
+    }
+
+    /**
      * Create a new TodoPage.
      *
      * @param page todo page to create
@@ -65,8 +82,8 @@ public class TodoServiceImpl implements TodoService {
      */
     @Override
     public Page createNewPage(Page page) {
-        PageEntity todoPageToCreate = pageMapper.toEntity(page);
-        return pageMapper.toModel(pageRepository.save(todoPageToCreate));
+        PageEntity pageToCreate = pageMapper.toEntity(page);
+        return pageMapper.toModel(pageRepository.save(pageToCreate));
     }
 
     /**
@@ -76,14 +93,14 @@ public class TodoServiceImpl implements TodoService {
      */
     @Override
     public void updatePage(Page page) throws PageNotFoundException {
-        PageEntity todoPageToUpdate = pageRepository.findById(page.getId()).orElseGet(null);
+        PageEntity pageToUpdate = pageRepository.findById(page.getId()).orElse(null);
 
-        if (todoPageToUpdate == null) {
+        if (pageToUpdate == null) {
             throw new PageNotFoundException();
         }
 
-        todoPageToUpdate.setTitle(page.getTitle());
-        pageRepository.save(todoPageToUpdate);
+        pageToUpdate.setTitle(page.getTitle());
+        pageRepository.save(pageToUpdate);
     }
 
     /**
@@ -115,18 +132,18 @@ public class TodoServiceImpl implements TodoService {
     @Override
     public void updateTask(Task task) throws TaskNotFoundException {
 
-        TaskEntity todoTaskToUpdate = taskRepository.findById(task.getId()).orElseGet(null);
+        TaskEntity taskToUpdate = taskRepository.findById(task.getId()).orElse(null);
 
-        if (todoTaskToUpdate == null) {
+        if (taskToUpdate == null) {
             throw new TaskNotFoundException();
         }
 
-        todoTaskToUpdate.setTitle(task.getTitle());
-        todoTaskToUpdate.setComplete(task.getComplete());
-        todoTaskToUpdate.setDescription(task.getDescription());
-        todoTaskToUpdate.setEndDate(task.getEndDate());
+        taskToUpdate.setTitle(task.getTitle());
+        taskToUpdate.setComplete(task.getComplete());
+        taskToUpdate.setDescription(task.getDescription());
+        taskToUpdate.setEndDate(task.getEndDate());
 
-        taskRepository.save(todoTaskToUpdate);
+        taskRepository.save(taskToUpdate);
     }
 
     /**
@@ -136,7 +153,7 @@ public class TodoServiceImpl implements TodoService {
      */
     @Override
     public void deleteTask(Long taskId) throws TaskNotFoundException {
-        if (taskRepository.findById(taskId).isEmpty()) {
+        if (!taskRepository.existsById(taskId)) {
             throw new TaskNotFoundException();
         }
 

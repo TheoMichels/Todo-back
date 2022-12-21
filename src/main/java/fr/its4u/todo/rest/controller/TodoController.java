@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
+@CrossOrigin
 @RestController
 @RequestMapping("/api/todo")
 public class TodoController {
@@ -28,6 +29,16 @@ public class TodoController {
     @GetMapping("/pages")
     public List<Page> retrieveAllTodoPages() {
         return todoService.retrieveAllTodoPages();
+    }
+
+    /**
+     * Retrieves TodoPage.
+     *
+     * @return page
+     */
+    @GetMapping("/pages/get/{page_id}")
+    public Page retrieveTodoPage(@PathVariable("page_id") Long pageId) throws PageNotFoundException {
+        return todoService.getPageById(pageId);
     }
 
     /**

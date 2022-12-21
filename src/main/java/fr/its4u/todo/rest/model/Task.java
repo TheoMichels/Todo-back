@@ -31,11 +31,6 @@ public class Task {
      */
     private Boolean isComplete;
 
-    /**
-     * Page ID.
-     */
-    private Long pageId;
-
     public Long getId() {
         return id;
     }
@@ -74,13 +69,5 @@ public class Task {
 
     public void setComplete(Boolean complete) {
         isComplete = complete;
-    }
-
-    public Long getPageId() {
-        return pageId;
-    }
-
-    public void setPageId(Long pageId) {
-        this.pageId = pageId;
     }
 }

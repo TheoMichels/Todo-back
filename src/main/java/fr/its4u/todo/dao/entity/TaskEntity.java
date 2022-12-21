@@ -42,12 +42,6 @@ public class TaskEntity {
     @Column(name = "COMPLETE")
     private Boolean complete;
 
-    /**
-     * Todo page.
-     */
-    @ManyToOne(fetch = FetchType.EAGER)
-    private PageEntity page;
-
     public Long getId() {
         return id;
     }
@@ -86,13 +80,5 @@ public class TaskEntity {
 
     public void setComplete(Boolean complete) {
         this.complete = complete;
-    }
-
-    public PageEntity getPage() {
-        return page;
-    }
-
-    public void setPage(PageEntity todoPage) {
-        this.page = todoPage;
     }
 }

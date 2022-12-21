@@ -27,7 +27,8 @@ public class PageEntity {
      * Tasks.
      */
     @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
-    @JoinColumn(name = "PAGE_ID")
+    @JoinColumn(name = "PAGE_ID", nullable = false)
+//    @OrderColumn(name = "ORDER")
     private List<TaskEntity> tasks;
 
     public Long getId() {
